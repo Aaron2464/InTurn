@@ -10,6 +10,7 @@ import com.inturn.android.enums.WaitingStatus
 import com.inturn.android.model.Customer
 import com.inturn.android.model.WaitingData
 import com.inturn.android.services.addQueueInRestaurant
+import com.inturn.android.services.dataChange
 import com.inturn.android.services.getRestaurant
 import com.inturn.android.services.postCustomerService
 import java.time.LocalDateTime
@@ -58,8 +59,10 @@ class MainViewModel : ViewModel() {
         _firstName.value = ""
         _lastName.value = ""
         _email.value = ""
+        _people.value=""
         _waitingDatas.value = arrayListOf()
         getRestaurant("-MBAe66mDPPlynlus4-e", ::success, ::error)
+        dataChange("restaurant/-MBAe66mDPPlynlus4-e/waiting", ::success, ::error)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -79,7 +82,7 @@ class MainViewModel : ViewModel() {
     fun createWaitlist(userdata : DataSnapshot){
 
         val waitingData = WaitingData(null, Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()), Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant())
-        , WaitingStatus.wating, userdata.getValue(Customer::class.java)!!, people.value?.toInt())
+        , WaitingStatus.waiting, userdata.getValue(Customer::class.java)!!, people.value?.toInt())
 
         /**fix restaurantId just test for now*/
         ///TODO After restaurant login function finish here should use different restaurantId for different restaurant
@@ -114,7 +117,7 @@ class MainViewModel : ViewModel() {
 
     /**when success call this function*/
     fun success(cdata: DataSnapshot) {
-        cdata.child("wating").children.forEach{
+        cdata.child("waiting").children.forEach{
             var watingD = it.getValue(WaitingData::class.java)!!
             watingD.id = it.key
             _waitingDatas.value?.add(watingD)

@@ -4,12 +4,12 @@ data class Restaurant(
     var id : String? = null,
     var name : String? = null,
     var address: String? = null,
-    var wating : MutableList<WaitingData> = mutableListOf()
+    var waiting : MutableList<WaitingData> = mutableListOf()
 )
 
 data class getRestaurant(
     var id : String? = null,
     var name : String? = null,
     var address: String? = null,
-    var watingList : MutableList<WaitingData> = mutableListOf()
+    var waitingList : MutableList<WaitingData> = mutableListOf()
 )

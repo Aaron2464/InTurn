@@ -1,6 +1,7 @@
 package com.inturn.android.services
 
 import android.media.session.MediaSession
+import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -53,6 +54,34 @@ fun updateData(path : String, data : Any, updateSuccessFunction:(getData:DataSna
         override fun onCancelled(error: DatabaseError) {
             updateErrorFunction(error)
         }
+    })
+}
+
+fun dataChange(path : String ,changeSuccessFunction:(getData:DataSnapshot)->Unit, changeErrorFunction:(error:DatabaseError)-> Unit){
+    val database = Firebase.database
+    val myRef = database.getReference(path)
+
+    myRef.addChildEventListener(object : ChildEventListener {
+        override fun onCancelled(error: DatabaseError) {
+
+        }
+
+        override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+
+        }
+
+        override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+//            changeSuccessFunction(snapshot)
+        }
+
+        override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+
+        }
+
+        override fun onChildRemoved(snapshot: DataSnapshot) {
+//            changeSuccessFunction(snapshot)
+        }
+
     })
 }
 

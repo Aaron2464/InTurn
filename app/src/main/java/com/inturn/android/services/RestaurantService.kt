@@ -44,7 +44,7 @@ fun getAllRestaurant(success: (restaurant: DataSnapshot) -> Unit, error:(error:A
 }
 
 fun addQueueInRestaurant(restaurantId: String, waitingData: WaitingData, success: (restaurant: DataSnapshot) -> Unit, error:(error:Any?) -> Unit){
-    postData("restaurant/" + restaurantId + "/wating", waitingData, success, error)
+    postData("restaurant/" + restaurantId + "/waiting", waitingData, success, error)
 //    postData("restaurant/" + restaurantId + "/wating", waitingData, success,
 //        {
 //            error(error)
@@ -73,7 +73,7 @@ fun updateWaitingDataWaitingStatus(restaurantId: String, waitingDataId :String, 
         success(it, waitingDataId)
     }
 
-    updateData("restaurant/" + restaurantId + "/wating/" + waitingDataId + "/status", status, finish, error)
+    updateData("restaurant/" + restaurantId + "/waiting/" + waitingDataId + "/status", status, finish, error)
 
 //    updateData("restaurant/" + restaurantId + "/wating/" + waitingDataId + "/status", status,
 //        {
