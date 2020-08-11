@@ -57,7 +57,7 @@ fun updateData(path : String, data : Any, updateSuccessFunction:(getData:DataSna
     })
 }
 
-fun dataChange(path : String ,changeSuccessFunction:(getData:DataSnapshot)->Unit, changeErrorFunction:(error:DatabaseError)-> Unit){
+fun dataChange(path : String ,onAdd:(getData:DataSnapshot)->Unit, onChange:(getData:DataSnapshot)->Unit, onDelete:(getData:DataSnapshot)->Unit, changeErrorFunction:(error:DatabaseError)-> Unit){
     val database = Firebase.database
     val myRef = database.getReference(path)
 
@@ -71,15 +71,15 @@ fun dataChange(path : String ,changeSuccessFunction:(getData:DataSnapshot)->Unit
         }
 
         override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-//            changeSuccessFunction(snapshot)
+            onChange(snapshot)
         }
 
         override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-
+            onAdd(snapshot)
         }
 
         override fun onChildRemoved(snapshot: DataSnapshot) {
-//            changeSuccessFunction(snapshot)
+            onDelete(snapshot)
         }
 
     })

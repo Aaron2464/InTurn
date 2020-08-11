@@ -61,8 +61,8 @@ class MainViewModel : ViewModel() {
         _email.value = ""
         _people.value=""
         _waitingDatas.value = arrayListOf()
-        getRestaurant("-MBAe66mDPPlynlus4-e", ::success, ::error)
-        dataChange("restaurant/-MBAe66mDPPlynlus4-e/waiting", ::success, ::error)
+//        getRestaurant("-MBAe66mDPPlynlus4-e", ::success, ::error)
+        dataChange("restaurant/-MBAe66mDPPlynlus4-e/waiting", ::onAdd, ::onChange, ::onDelete, ::error)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -100,8 +100,11 @@ class MainViewModel : ViewModel() {
 //        _getTableData.value = restaurant.getValue(WaitingData::class.java)!!
         var watingD = restaurant.getValue(WaitingData::class.java)!!
         watingD.id = restaurant.key
-        _waitingDatas.value?.add(watingD)
-        _waitingDatas.value = _waitingDatas.value
+
+        if(_waitingDatas.value?.indexOf(watingD)== -1){
+            _waitingDatas.value?.add(watingD)
+            _waitingDatas.value = _waitingDatas.value
+        }
     }
 
     fun isAllow() : Boolean {
@@ -122,6 +125,31 @@ class MainViewModel : ViewModel() {
             watingD.id = it.key
             _waitingDatas.value?.add(watingD)
         }
+        _waitingDatas.value = _waitingDatas.value
+    }
+
+    fun onAdd(cdata: DataSnapshot) {
+        var watingD = cdata.getValue(WaitingData::class.java)!!
+        watingD.id = cdata.key
+
+        if(_waitingDatas.value?.indexOf(watingD)== -1){
+            _waitingDatas.value?.add(watingD)
+            _waitingDatas.value = _waitingDatas.value
+        }
+    }
+
+    fun onChange(cdata: DataSnapshot) {
+        var watingD = cdata.getValue(WaitingData::class.java)!!
+        watingD.id = cdata.key
+        _waitingDatas.value?.remove(_waitingDatas.value?.find { it.id == watingD.id })
+        _waitingDatas.value?.add(watingD)
+        _waitingDatas.value = _waitingDatas.value
+    }
+
+    fun onDelete(cdata: DataSnapshot) {
+        var watingD = cdata.getValue(WaitingData::class.java)!!
+        watingD.id = cdata.key
+        _waitingDatas.value?.remove(watingD)
         _waitingDatas.value = _waitingDatas.value
     }
 }
