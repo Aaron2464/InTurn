@@ -111,7 +111,20 @@ class MainViewModel : ViewModel() {
         //TODO: must have people value
         //TODO: must have legal email
         //TODO: must have first name or last name
-        return true
+
+        val p = _people.value
+        val e = _email.value
+        val n = _firstName.value + " " + _lastName.value
+
+        if (p != null && p.matches(Regex("[-+]?\\d*\\.?\\d+"))) {
+            if (e != null && e.matches(Regex("[\\w-]+@([\\w-]+\\.)+[\\w-]+"))) {
+                if (n.isNotBlank()) {
+                    return true
+                }
+            }
+        }
+
+        return false
     }
 
     fun error(errormessage : Any?){
