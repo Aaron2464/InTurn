@@ -1,5 +1,7 @@
-package com.inturn.android.Services
+package com.inturn.android.services
 
+import android.media.session.MediaSession
+import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -10,7 +12,7 @@ fun getData(path: String, getSuccessFunction:(getData:DataSnapshot)->Unit, getEr
     val database = Firebase.database
     val myRef = database.getReference(path)
 
-    myRef.addValueEventListener(object : ValueEventListener {
+    myRef.addListenerForSingleValueEvent(object : ValueEventListener {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
             getSuccessFunction(dataSnapshot)
         }
@@ -28,7 +30,7 @@ fun postData(path : String, data : Any, postSuccessFunction:(getData:DataSnapsho
     val key = myRef.push().key.toString()
     myRef.child(key).setValue(data)
 
-    myRef.addValueEventListener(object : ValueEventListener {
+    myRef.addListenerForSingleValueEvent(object : ValueEventListener {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
             postSuccessFunction(dataSnapshot.child(key))
         }
@@ -44,7 +46,7 @@ fun updateData(path : String, data : Any, updateSuccessFunction:(getData:DataSna
     val myRef = database.getReference(path)
     myRef.setValue(data)
 
-    myRef.addValueEventListener(object : ValueEventListener {
+    myRef.addListenerForSingleValueEvent(object : ValueEventListener {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
             updateSuccessFunction(dataSnapshot)
         }
@@ -52,6 +54,34 @@ fun updateData(path : String, data : Any, updateSuccessFunction:(getData:DataSna
         override fun onCancelled(error: DatabaseError) {
             updateErrorFunction(error)
         }
+    })
+}
+
+fun dataChange(path : String ,onAdd:(getData:DataSnapshot)->Unit, onChange:(getData:DataSnapshot)->Unit, onDelete:(getData:DataSnapshot)->Unit, changeErrorFunction:(error:DatabaseError)-> Unit){
+    val database = Firebase.database
+    val myRef = database.getReference(path)
+
+    myRef.addChildEventListener(object : ChildEventListener {
+        override fun onCancelled(error: DatabaseError) {
+
+        }
+
+        override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+
+        }
+
+        override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+            onChange(snapshot)
+        }
+
+        override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+            onAdd(snapshot)
+        }
+
+        override fun onChildRemoved(snapshot: DataSnapshot) {
+            onDelete(snapshot)
+        }
+
     })
 }
 

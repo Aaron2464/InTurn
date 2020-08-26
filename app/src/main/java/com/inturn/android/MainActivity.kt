@@ -4,34 +4,67 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.annotation.RequiresApi
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.inturn.android.Enum.WaitingStatus
-import com.inturn.android.Model.Customer
-import com.inturn.android.Model.Restaurant
-import com.inturn.android.Model.WaitingData
-import com.inturn.android.Model.getRestaurant
-import com.inturn.android.RecyclerView.WaitingListAdapter
-import com.inturn.android.Services.*
-import java.time.LocalDateTime
-import java.time.ZoneId
+import com.inturn.android.factory.MainViewModelFactory
+import com.inturn.android.recyclerview.WaitingListAdapter
+import com.inturn.android.viewmodel.MainViewModel
+import com.inturn.android.databinding.ActivityMainBinding
+import com.inturn.android.widgets.CircleTimer
+import androidx.lifecycle.ViewModelProviders
+import com.inturn.android.model.WaitingData
 
 class MainActivity : AppCompatActivity() {
+    lateinit var mTimer: CircleTimer
+
     companion object {
         const val TAG = "KotlinActivity"
     }
 
     private lateinit var mRecyclerView: RecyclerView
-
+    private lateinit var viewModel: MainViewModel
+    private lateinit var viewModelFactory: MainViewModelFactory
+    private var mContactList: ArrayList<WaitingData> = arrayListOf()
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        val binding : ActivityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+
+        viewModelFactory = MainViewModelFactory()
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
 
         mRecyclerView = findViewById(R.id.waitinglist)
-        val adapter = WaitingListAdapter(ArrayList()) /**empty data source*/
-        mRecyclerView.adapter = adapter
-        mRecyclerView.layoutManager = LinearLayoutManager(parent)
+
+        viewModel.waitingDatas.observe(this, Observer {
+            waitinglist ->
+            mRecyclerView.also {
+                it.layoutManager = LinearLayoutManager(this)
+                it.setHasFixedSize(true)
+                it.adapter = WaitingListAdapter(waitinglist)
+            }
+        })
+
+//        val adapter = WaitingListAdapter(mContactList)
+
+//        viewModel.getTableData.observe(this, Observer { getTable ->
+//            mContactList.add(getTable)
+//            adapter.notifyDataSetChanged()
+//        })
+
+        super.onCreate(savedInstanceState)
+//        setContentView(R.layout.activity_main)
+
+//        mRecyclerView.adapter = adapter
+//        mRecyclerView.layoutManager = LinearLayoutManager(parent)
+
+        /** example */
+        mTimer = findViewById(R.id.timer)
+        mTimer.setValue(600.0F)
+        mTimer.Start()
+
+        binding.mainViewModel = viewModel
+        binding.setLifecycleOwner(this)
 
         /**add NewRestaurant example*/
 //        val restaurant = Restaurant(null, "Saku", "1234 Richardson St, Vancouver", mutableListOf())
@@ -55,8 +88,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**when success call this function*/
-//    fun success(cdata:List<getRestaurant>?) {
-//        print(cdata)
+//    fun success(cdata: DataSnapshot) {
+//        cdata.child("wating").children.forEach{
+//            mContactList.add(it.getValue(WaitingData::class.java)!!)
+//        }
+//        mRecyclerView.adapter?.notifyDataSetChanged()
 //    }
 
     /**when fail call this function*/

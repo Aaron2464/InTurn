@@ -1,4 +1,4 @@
-package com.inturn.android.Enum
+package com.inturn.android.enums
 
 /**For check customer status*/
 enum class CustomerStatus(val code : Int) {

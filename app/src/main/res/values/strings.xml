@@ -13,4 +13,9 @@
     <string name="get_table">get table</string>
     <string name="email">email</string>
     <string name="todo1">TODO1</string>
+    <string name="cancel">CANCEL</string>
+    <string name="check">CHECK</string>
+    <string name="checked">CHECKED</string>
+    <string name="time_format">%1$s:%2$s</string>
+
 </resources>
